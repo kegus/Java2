@@ -8,6 +8,6 @@ public class Barrier {
     }
 
     public void printResult(boolean res){
-        System.out.println((res?"":"не ")+"преодолел "+name);
+        System.out.println((res?"":" не")+" преодолел "+name);
     }
 }

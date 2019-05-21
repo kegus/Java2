@@ -3,12 +3,15 @@ package Lesson1;
 public class Bot implements IActions {
     private int maxRun;
     private int maxJump;
-    public boolean canMove = true;
+    private boolean canMove = true;
 
     public Bot(int maxRun, int maxJump) {
         this.maxRun = maxRun;
         this.maxJump = maxJump;
     }
+
+    @Override
+    public boolean canMove() { return canMove; }
 
     @Override
     public boolean run(RunningRoad road) {

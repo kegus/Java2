@@ -28,7 +28,7 @@ public class Program1 {
         Bot b = new Bot(maxRun, maxJump);
 
         for (int i = 0; i < trace_road.length; i++) {
-            if (h.canMove) {
+            if (h.canMove()) {
                 System.out.print("Человек ("+h.getMaxRun()+","+h.getMaxJump()+")");
                 if (trace_road[i] instanceof RunningRoad) {
                     ((Barrier) trace_road[i]).printResult(h.run((RunningRoad) trace_road[i]));
@@ -36,7 +36,7 @@ public class Program1 {
                     ((Barrier) trace_road[i]).printResult(h.jump((Wall) trace_road[i]));
                 }
             }
-            if (c.canMove) {
+            if (c.canMove()) {
                 System.out.print("Кот ("+c.getMaxRun()+","+c.getMaxJump()+")");
                 if (trace_road[i] instanceof RunningRoad) {
                     ((Barrier) trace_road[i]).printResult(c.run((RunningRoad) trace_road[i]));
@@ -44,7 +44,7 @@ public class Program1 {
                     ((Barrier) trace_road[i]).printResult(c.jump((Wall) trace_road[i]));
                 }
             }
-            if (b.canMove) {
+            if (b.canMove()) {
                 System.out.print("Робот ("+b.getMaxRun()+","+b.getMaxJump()+")");
                 if (trace_road[i] instanceof RunningRoad) {
                     ((Barrier) trace_road[i]).printResult(b.run((RunningRoad) trace_road[i]));
@@ -53,9 +53,9 @@ public class Program1 {
                 }
             }
         }
-        System.out.println("Человек "+(h.canMove?" ":" не ")+"дошёл до финиша");
-        System.out.println("Кот "+(c.canMove?" ":" не ")+"дошёл до финиша");
-        System.out.println("Робот "+(b.canMove?" ":" не ")+"дошёл до финиша");
+        System.out.println("Человек "+(h.canMove()?" ":" не ")+"дошёл до финиша");
+        System.out.println("Кот "+(c.canMove()?" ":" не ")+"дошёл до финиша");
+        System.out.println("Робот "+(b.canMove()?" ":" не ")+"дошёл до финиша");
         System.out.println("ok");
     }
 
