@@ -6,6 +6,7 @@ public class Program1 {
     public static void main(String[] args) {
         int maxRun;
         int maxJump;
+        // создание полосы препятствий
         Barrier[] trace_road = new Barrier[5];
         for (int i = 0; i < trace_road.length; i++) {
             int val;
@@ -17,6 +18,7 @@ public class Program1 {
                 trace_road[i] = new Wall(val);
             }
         }
+        // присвоение макс. бег и прыжок
         maxRun = rnd.nextInt(100)+1;
         maxJump = rnd.nextInt(10)+1;
         Human h = new Human(maxRun, maxJump);
@@ -26,33 +28,13 @@ public class Program1 {
         maxRun = rnd.nextInt(200)+1;
         maxJump = rnd.nextInt(25)+1;
         Bot b = new Bot(maxRun, maxJump);
-
+        // преодоление полосы
         for (int i = 0; i < trace_road.length; i++) {
-            if (h.canMove()) {
-                System.out.print("Человек ("+h.getMaxRun()+","+h.getMaxJump()+")");
-                if (trace_road[i] instanceof RunningRoad) {
-                    ((Barrier) trace_road[i]).printResult(h.run((RunningRoad) trace_road[i]));
-                } else {
-                    ((Barrier) trace_road[i]).printResult(h.jump((Wall) trace_road[i]));
-                }
-            }
-            if (c.canMove()) {
-                System.out.print("Кот ("+c.getMaxRun()+","+c.getMaxJump()+")");
-                if (trace_road[i] instanceof RunningRoad) {
-                    ((Barrier) trace_road[i]).printResult(c.run((RunningRoad) trace_road[i]));
-                } else {
-                    ((Barrier) trace_road[i]).printResult(c.jump((Wall) trace_road[i]));
-                }
-            }
-            if (b.canMove()) {
-                System.out.print("Робот ("+b.getMaxRun()+","+b.getMaxJump()+")");
-                if (trace_road[i] instanceof RunningRoad) {
-                    ((Barrier) trace_road[i]).printResult(b.run((RunningRoad) trace_road[i]));
-                } else {
-                    ((Barrier) trace_road[i]).printResult(b.jump((Wall) trace_road[i]));
-                }
-            }
+            h.doAction(trace_road[i]);
+            c.doAction(trace_road[i]);
+            b.doAction(trace_road[i]);
         }
+        // результат
         System.out.println("Человек "+(h.canMove()?" ":" не ")+"дошёл до финиша");
         System.out.println("Кот "+(c.canMove()?" ":" не ")+"дошёл до финиша");
         System.out.println("Робот "+(b.canMove()?" ":" не ")+"дошёл до финиша");

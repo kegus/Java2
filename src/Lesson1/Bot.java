@@ -11,6 +11,14 @@ public class Bot implements IActions {
     }
 
     @Override
+    public void doAction(Barrier barrier) {
+        if (canMove) {
+            System.out.print("Робот ("+maxRun+","+maxJump+")");
+            barrier.printResult(barrier instanceof RunningRoad?run((RunningRoad) barrier):jump((Wall) barrier));
+        }
+    }
+
+    @Override
     public boolean canMove() { return canMove; }
 
     @Override
