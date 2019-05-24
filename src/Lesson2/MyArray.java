@@ -14,11 +14,13 @@ public class MyArray {
         for (int i = 0; i < arr.length; i++) if (arr[i].length != nRows) throw new MyArraySizeException();
     }
 
-    public void checkCast() throws MyArrayDataException {
+    public void checkCast() throws MyArrayDataException, MyException {
+        checkArr();
         for (int i = 0; i < arr.length; i++) {
             int j = 0;
             for (String s : arr[i]) {
-                if (!canCast(s)) throw new MyArrayDataException();
+                if (!canCast(s)) throw new MyArrayDataException(i,j);
+                j++;
             }
         }
     }
@@ -28,8 +30,7 @@ public class MyArray {
         try {
             int check = Integer.parseInt(s);
             res = true;
-        } catch (MyArrayDataException e)
-        { }
+        } catch (NumberFormatException e) { }
         return res;
     }
 }
