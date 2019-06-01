@@ -23,6 +23,15 @@ public class Program3 {
         System.out.println(checkSet);
         System.out.println(countMap);
         System.out.println();
+
+        // 2-е задание
+        PhoneDictionary phoneDict = new PhoneDictionary();
+        phoneDict.add("Ivanov", "+7 123 456 789");
+        phoneDict.add("Ivanov", "+7 123 654 789");
+        phoneDict.add("Petrov", "+7 321 456 789");
+        phoneDict.add("Petrov", "+7 321 456 987");
+        System.out.println("Ivanov: "+phoneDict.get("Ivanov"));
+        System.out.println("Petrov: "+phoneDict.get("Petrov"));
         System.out.println("Ok");
     }
 }
