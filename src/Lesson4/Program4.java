@@ -32,16 +32,16 @@ class MyWindow extends JFrame {
         setLayout(null);
 
         JLabel chatLabel = new JLabel("Chat:");;
-        chatLabel.setBounds(5,5,200,25);
+        chatLabel.setBounds(7,5,200,25);
         JTextArea areaChat = new JTextArea("", 1, 1);
-        areaChat.setBounds(5,30,370,180);
+        areaChat.setBounds(7,30,370,180);
         add(chatLabel);
         add(areaChat);
 
         JTextField msgField = new JTextField();
-        msgField.setBounds(5,220,280,25);
+        msgField.setBounds(7,220,280,25);
         JButton jbt = new JButton("Ok");
-        jbt.setBounds(295,220,80,25);
+        jbt.setBounds(297,220,80,25);
         jbt.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,6 +54,5 @@ class MyWindow extends JFrame {
         add(jbt);
 
         setVisible(true);
-        System.out.println("Ok");
     }
 }
