@@ -3,7 +3,9 @@ package Lesson5;
 import java.util.Arrays;
 
 public class Program5 {
-    static final int size = 9000000;
+    static final int size = 6000000;
+    static final int divider = 6000001;
+    static final int sleepMs = 10;
     static final int h = size / 2;
     static final int h1 = size / 3;
     static final int h2 = size / 4;
@@ -40,7 +42,7 @@ public class Program5 {
         new Thread(() -> calcArr(false)).start();
         new Thread(() -> calcArr(true)).start();
         try {
-            do Thread.sleep(20);
+            do Thread.sleep(sleepMs);
             while (cntThreads > 0);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -59,7 +61,7 @@ public class Program5 {
         new Thread(() -> calcArr1(1)).start();
         new Thread(() -> calcArr1(2)).start();
         try {
-            do Thread.sleep(20);
+            do Thread.sleep(sleepMs);
             while (cntThreads > 0);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -81,7 +83,7 @@ public class Program5 {
         new Thread(() -> calcArr2(2)).start();
         new Thread(() -> calcArr2(3)).start();
         try {
-            do Thread.sleep(20);
+            do Thread.sleep(sleepMs);
             while (cntThreads > 0);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -113,18 +115,39 @@ public class Program5 {
         switch (n) {
             case 0:
                 synchronized(lock1) { cntThreads++; }
-                for (int i = 0; i < h1; i++)
-                    b1[i] = (float)(b1[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+                for (int i = 0; i < h1; i++) {
+                    b1[i] = (float) (b1[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+//                    if ((i+1) % divider == 0)
+//                    try{
+//                        Thread.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
                 synchronized(lock1) { cntThreads--; }
             case 1:
                 synchronized(lock1) { cntThreads++; }
-                for (int i = 0; i < h1; i++)
+                for (int i = 0; i < h1; i++) {
                     b2[i] = (float)(b2[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+//                    if ((i+1) % divider == 0)
+//                    try{
+//                        Thread.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
                 synchronized(lock1) { cntThreads--; }
             default:
                 synchronized(lock1) { cntThreads++; }
-                for (int i = 0; i < h1; i++)
+                for (int i = 0; i < h1; i++) {
                     b3[i] = (float)(b3[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+//                    if ((i+1) % divider == 0)
+//                    try{
+//                        Thread.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
                 synchronized(lock1) { cntThreads--; }
         }
     }
@@ -132,23 +155,51 @@ public class Program5 {
         switch (n) {
             case 0:
                 synchronized(lock2) { cntThreads++; }
-                for (int i = 0; i < h2; i++)
+                for (int i = 0; i < h2; i++) {
                     c1[i] = (float)(c1[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+//                    if ((i+1) % divider == 0)
+//                    try{
+//                        Thread.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
                 synchronized(lock2) { cntThreads--; }
             case 1:
                 synchronized(lock2) { cntThreads++; }
-                for (int i = 0; i < h2; i++)
+                for (int i = 0; i < h2; i++) {
                     c2[i] = (float)(c2[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+//                    if ((i+1) % divider == 0)
+//                    try{
+//                        Thread.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
                 synchronized(lock2) { cntThreads--; }
             case 2:
                 synchronized(lock2) { cntThreads++; }
-                for (int i = 0; i < h2; i++)
+                for (int i = 0; i < h2; i++) {
                     c3[i] = (float)(c3[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+//                    if ((i+1) % divider == 0)
+//                    try{
+//                        Thread.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
                 synchronized(lock2) { cntThreads--; }
             default:
                 synchronized(lock2) { cntThreads++; }
-                for (int i = 0; i < h2; i++)
+                for (int i = 0; i < h2; i++) {
                     c4[i] = (float)(c4[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
+//                    if ((i+1) % divider == 0)
+//                    try{
+//                        Thread.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
                 synchronized(lock2) { cntThreads--; }
         }
     }
