@@ -42,8 +42,11 @@ public class Program5 {
         new Thread(() -> calcArr(false)).start();
         new Thread(() -> calcArr(true)).start();
         try {
-            do Thread.sleep(sleepMs);
-            while (cntThreads > 0);
+            int checkCntThreads;
+            do {
+                Thread.sleep(sleepMs);
+                synchronized(lock) { checkCntThreads = cntThreads; }
+            } while (checkCntThreads > 0);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -61,8 +64,11 @@ public class Program5 {
         new Thread(() -> calcArr1(1)).start();
         new Thread(() -> calcArr1(2)).start();
         try {
-            do Thread.sleep(sleepMs);
-            while (cntThreads > 0);
+            int checkCntThreads;
+            do {
+                Thread.sleep(sleepMs);
+                synchronized(lock1) { checkCntThreads = cntThreads; }
+            } while (checkCntThreads > 0);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -83,8 +89,11 @@ public class Program5 {
         new Thread(() -> calcArr2(2)).start();
         new Thread(() -> calcArr2(3)).start();
         try {
-            do Thread.sleep(sleepMs);
-            while (cntThreads > 0);
+            int checkCntThreads;
+            do {
+                Thread.sleep(sleepMs);
+                synchronized(lock2) { checkCntThreads = cntThreads; }
+            } while (checkCntThreads > 0);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
