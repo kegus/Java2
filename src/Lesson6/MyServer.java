@@ -19,8 +19,8 @@ public class MyServer extends JFrame {
     private JTextField msg;
 
     public MyServer(){
-        openConnect();
         drawGUI();
+        openConnect();
     }
 
     private void openConnect() {
@@ -32,6 +32,7 @@ public class MyServer extends JFrame {
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
                 String strFromClient = in.readUTF();
+                area.append("Client: "+strFromClient+"\n");
                 out.writeUTF("Hello");
                 while (true) {
                     try {

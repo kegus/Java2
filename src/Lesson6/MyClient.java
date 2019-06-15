@@ -17,19 +17,18 @@ public class MyClient extends JFrame {
     private DataOutputStream out;
 
     private Thread tLstnr;
-    private boolean interapted = false;
 
     private JTextArea area;
     private JTextField msg;
 
     public MyClient(){
+        drawGUI();
         try {
             openConnect();
         } catch (IOException e) {
             System.out.println("Error connection");
             e.printStackTrace();
         }
-        drawGUI();
     }
 
     private void openConnect() throws IOException {
@@ -38,14 +37,13 @@ public class MyClient extends JFrame {
         out = new DataOutputStream(socket.getOutputStream());
         out.writeUTF("Hello");
         tLstnr = new Thread(() -> {
-                while (!interapted) {
+                while (true) {
                     try {
                         String strFromSrv = in.readUTF();
                         if (strFromSrv.equalsIgnoreCase("/end")) {
                             closeConnect();
                             break;
                         }
-                        if (area != null)
                         area.append("Server: "+strFromSrv+"\n");
                     } catch (IOException e) {
                         System.out.println("Error reading");
@@ -58,8 +56,6 @@ public class MyClient extends JFrame {
 
     private void closeConnect(){
         try {
-            interapted = true;
-            tLstnr.interrupt();
             in.close();
             out.close();
             socket.close();
