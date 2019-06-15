@@ -78,6 +78,10 @@ public class MyServer extends JFrame {
                     }
                 } catch (IOException e) {
                     System.out.println("Error creating ServerSocket");
+                    try {
+                        closeConnect();
+                        Thread.sleep(1500);
+                    } catch (InterruptedException ie) { }
                     //e.printStackTrace();
                 }
             }

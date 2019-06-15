@@ -56,7 +56,6 @@ public class MyClient extends JFrame {
                         break;
                     }
                     area.append("Server: " + strFromSrv + "\n");
-
                 }
             } catch (IOException e) {
                 area.append("Error reading from server\n");
