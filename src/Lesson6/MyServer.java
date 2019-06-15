@@ -23,35 +23,63 @@ public class MyServer extends JFrame {
         openConnect();
     }
 
+    private void closeConnect(){
+        try {
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (socket != null) socket.close();
+            in = null; out = null ;socket = null;
+        } catch (IOException e) {
+            System.out.println("Error close connection");
+            //e.printStackTrace();
+        }
+    }
+
     private void openConnect() {
         new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(8888)) {
-                System.out.println("Сервер запущен, ждёт подключения...");
-                socket = serverSocket.accept();
-                System.out.println("Клиент подключился");
-                in = new DataInputStream(socket.getInputStream());
-                out = new DataOutputStream(socket.getOutputStream());
-                String strFromClient = in.readUTF();
-                area.append("Client: "+strFromClient+"\n");
-                out.writeUTF("Hello");
-                while (true) {
-                    try {
-                        strFromClient = in.readUTF();
-                        if (strFromClient.equalsIgnoreCase("/end")) {
-                            System.out.println("Client disconnected");
-                            out.writeUTF(strFromClient);
+            while (true) {
+                try (ServerSocket serverSocket = new ServerSocket(8888)) {
+                    System.out.println("Сервер запущен, ждёт подключения...");
+                    socket = serverSocket.accept();
+                    System.out.println("Клиент подключился");
+                    in = new DataInputStream(socket.getInputStream());
+                    out = new DataOutputStream(socket.getOutputStream());
+                    String strFromClient = in.readUTF();
+                    area.append("Client: " + strFromClient + "\n");
+                    out.writeUTF("Hello");
+                    while (true) {
+                        try {
+                            strFromClient = in.readUTF();
+                            if (strFromClient.equalsIgnoreCase("/end")) {
+                                System.out.println("Client disconnected");
+                                try {
+                                    out.writeUTF(strFromClient);
+                                } catch (IOException e) {
+                                }
+                                try {
+                                    closeConnect();
+                                    serverSocket.close();
+                                    Thread.sleep(1500);
+                                } catch (InterruptedException ie) { }
+                                break;
+                            }
+                            area.append("Client: " + strFromClient + "\n");
+                            //outPutStream.writeUTF("echo: " + strFromClient);
+                        } catch (IOException e) {
+                            System.out.println("Error reading");
+                            try {
+                                closeConnect();
+                                serverSocket.close();
+                                Thread.sleep(1500);
+                            } catch (InterruptedException ie) { }
                             break;
+                            //e.printStackTrace();
                         }
-                        area.append("Client: "+strFromClient+"\n");
-                        //outPutStream.writeUTF("echo: " + strFromClient);
-                    } catch (IOException e) {
-                        System.out.println("Error reading");
-                        e.printStackTrace();
                     }
+                } catch (IOException e) {
+                    System.out.println("Error creating ServerSocket");
+                    //e.printStackTrace();
                 }
-            } catch (IOException e) {
-                System.out.println("Error creating ServerSocket");
-                e.printStackTrace();
             }
         }).start();
     }
@@ -79,7 +107,7 @@ public class MyServer extends JFrame {
     }
 
     private void sndMsg(){
-        if (!msg.getText().trim().isEmpty()){
+        if (socket != null && socket.isConnected() && !msg.getText().trim().isEmpty()){
             try {
                 area.append("Server: "+msg.getText()+"\n");
                 out.writeUTF(msg.getText());

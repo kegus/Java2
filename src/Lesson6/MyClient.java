@@ -2,6 +2,8 @@ package Lesson6;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
@@ -23,45 +25,60 @@ public class MyClient extends JFrame {
 
     public MyClient(){
         drawGUI();
-        try {
-            openConnect();
-        } catch (IOException e) {
-            System.out.println("Error connection");
-            e.printStackTrace();
-        }
+        openConnect();
+//        try {
+//        } catch (IOException e) {
+//            System.out.println("Error connection");
+//            e.printStackTrace();
+//        }
     }
 
-    private void openConnect() throws IOException {
-        socket = new Socket(ADDR, PORT);
-        in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
-        out.writeUTF("Hello");
+    private void openConnect() {
         tLstnr = new Thread(() -> {
-                while (true) {
+            while (true) try {
+                while (true) try {
+                    socket = new Socket(ADDR, PORT);
+                    in = new DataInputStream(socket.getInputStream());
+                    out = new DataOutputStream(socket.getOutputStream());
+                    out.writeUTF("Hello");
+                    break;
+                } catch (IOException ioe) {
+                    area.append("trying to connect...\n");
                     try {
-                        String strFromSrv = in.readUTF();
-                        if (strFromSrv.equalsIgnoreCase("/end")) {
-                            closeConnect();
-                            break;
-                        }
-                        area.append("Server: "+strFromSrv+"\n");
-                    } catch (IOException e) {
-                        System.out.println("Error reading");
-                        e.printStackTrace();
-                    }
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ie) { }
                 }
-            });
+
+                while (true) {
+                    String strFromSrv = in.readUTF();
+                    if (strFromSrv.equalsIgnoreCase("/end")) {
+                        closeConnect();
+                        break;
+                    }
+                    area.append("Server: " + strFromSrv + "\n");
+
+                }
+            } catch (IOException e) {
+                area.append("Error reading from server\n");
+                try {
+                    closeConnect();
+                    Thread.sleep(1500);
+                } catch (InterruptedException ie) { }
+                //e.printStackTrace();
+            }
+        });
         tLstnr.start();
     }
 
     private void closeConnect(){
         try {
-            in.close();
-            out.close();
-            socket.close();
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (socket != null) socket.close();
+            in = null; out = null ;socket = null;
         } catch (IOException e) {
             System.out.println("Error close connection");
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -79,10 +96,25 @@ public class MyClient extends JFrame {
         JPanel botomPan = new JPanel(new BorderLayout());
         JButton btSendMsg = new JButton("Send");
         btSendMsg.addActionListener(e -> sndMsg());
+//        btSendMsg.addActionListener(
+//                new ActionListener() {
+//                    @Override
+//                    public void actionPerformed(ActionEvent e) {
+//                        sndMsg();
+//                    }
+//                });
         msg.addActionListener(e -> sndMsg());
+//        msg.addActionListener(
+//                new ActionListener() {
+//                    @Override
+//                    public void actionPerformed(ActionEvent e) {
+//                        sndMsg();
+//                    }
+//                }
+//        );
+        botomPan.add(msg, BorderLayout.CENTER);
         botomPan.add(btSendMsg, BorderLayout.EAST);
 
-        botomPan.add(msg, BorderLayout.CENTER);
         add(botomPan, BorderLayout.SOUTH);
 
         //при закрытии окна клиента остановить сервер и закрыть ресурсы
@@ -91,7 +123,7 @@ public class MyClient extends JFrame {
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
                 try {
-                    out.writeUTF("/end");
+                    if (socket != null && socket.isConnected()) out.writeUTF("/end");
                     //closeConnect();
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -103,7 +135,7 @@ public class MyClient extends JFrame {
     }
 
     private void sndMsg(){
-        if (!msg.getText().trim().isEmpty()){
+        if (socket != null && socket.isConnected() && !msg.getText().trim().isEmpty()){
             try {
                 area.append("Client: "+msg.getText()+"\n");
                 out.writeUTF(msg.getText());
