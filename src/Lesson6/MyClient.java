@@ -2,6 +2,8 @@ package Lesson6;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,6 +15,9 @@ public class MyClient extends JFrame {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+
+    private Thread tLstnr;
+    private boolean interapted = false;
 
     private JTextArea area;
     private JTextField msg;
@@ -31,25 +36,30 @@ public class MyClient extends JFrame {
         socket = new Socket(ADDR, PORT);
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
-        new Thread(() -> {
-                while (true) {
+        out.writeUTF("Hello");
+        tLstnr = new Thread(() -> {
+                while (!interapted) {
                     try {
                         String strFromSrv = in.readUTF();
                         if (strFromSrv.equalsIgnoreCase("/end")) {
                             closeConnect();
                             break;
                         }
-                        area.append(strFromSrv+"\n");
+                        if (area != null)
+                        area.append("Server: "+strFromSrv+"\n");
                     } catch (IOException e) {
                         System.out.println("Error reading");
                         e.printStackTrace();
                     }
                 }
-            }).start();
+            });
+        tLstnr.start();
     }
 
     private void closeConnect(){
         try {
+            interapted = true;
+            tLstnr.interrupt();
             in.close();
             out.close();
             socket.close();
@@ -60,7 +70,7 @@ public class MyClient extends JFrame {
     }
 
     private void drawGUI(){
-        setBounds(100,100,600,600);
+        setBounds(600,100,400,400);
         setTitle("Client");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -77,11 +87,29 @@ public class MyClient extends JFrame {
         botomPan.add(btSendMsg, BorderLayout.EAST);
 
         botomPan.add(msg, BorderLayout.CENTER);
+        add(botomPan, BorderLayout.SOUTH);
+
+        //при закрытии окна клиента остановить сервер и закрыть ресурсы
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                try {
+                    out.writeUTF("/end");
+                    //closeConnect();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        setVisible(true);
     }
 
     private void sndMsg(){
         if (!msg.getText().trim().isEmpty()){
             try {
+                area.append("Client: "+msg.getText()+"\n");
                 out.writeUTF(msg.getText());
                 msg.setText("");
                 msg.grabFocus();
@@ -93,6 +121,6 @@ public class MyClient extends JFrame {
     }
 
     public static void main(String[] args) {
-
+        SwingUtilities.invokeLater(MyClient::new);
     }
 }
