@@ -1,7 +1,5 @@
 package Lesson7;
 
-import lib.TextPrompt;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -17,6 +15,7 @@ public class MyClient1 extends JFrame {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private String nickName;
 
     private Thread tLstnr;
 
@@ -49,14 +48,15 @@ public class MyClient1 extends JFrame {
                 while (true) {
                     String strFromSrv = in.readUTF();
                     if (strFromSrv.equalsIgnoreCase("/authOK")) {
+                        nickName = nick.getText();
                         topPan.setVisible(false);
                         area.append("Server connected\n");
-                    }
+                    } else
                     if (strFromSrv.equalsIgnoreCase("/end")) {
                         closeConnect();
                         break;
-                    }
-                    area.append("Server: " + strFromSrv + "\n");
+                    } else
+                        area.append("Server: " + strFromSrv + "\n");
                 }
             } catch (IOException e) {
                 area.append("Error reading from server\n");
@@ -132,10 +132,7 @@ public class MyClient1 extends JFrame {
     private void sndNick(){
         if (socket != null && socket.isConnected() && !nick.getText().trim().isEmpty()){
             try {
-//                area.append("Client: "+nick.getText()+"\n");
                 out.writeUTF("/auth " + nick.getText());
-//                nick.setText("");
-//                nick.grabFocus();
 
             } catch (IOException e) {
                 System.out.println("Error writing");
@@ -148,7 +145,7 @@ public class MyClient1 extends JFrame {
         if (socket != null && socket.isConnected() && !msg.getText().trim().isEmpty()){
             try {
                 area.append("Client: "+msg.getText()+"\n");
-                out.writeUTF(msg.getText());
+                out.writeUTF(nickName+": "+msg.getText());
                 msg.setText("");
                 msg.grabFocus();
             } catch (IOException e) {

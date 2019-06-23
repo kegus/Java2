@@ -11,6 +11,11 @@ public class ClientHandler {
     private AuthService authService;
     private DataOutputStream out;
     private DataInputStream in;
+
+    public String getNick() {
+        return nick;
+    }
+
     private String nick = null;
 
     public ClientHandler(Server server, Socket socket, AuthService authService) {
@@ -52,9 +57,10 @@ public class ClientHandler {
                     sendMsg("/serverclosed");
                     break;
                 }
-                server.broadcast(str);
+                server.broadcast(nick, str);
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
         }
     }

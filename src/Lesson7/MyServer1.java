@@ -48,15 +48,17 @@ class Server {
         }
     }
 
-    void broadcast(String message) {
+    void broadcast(String nick, String message) {
         for (ClientHandler clientHandler : peers) {
-            clientHandler.sendMsg(message);
+            if (!clientHandler.getNick().equals(nick))
+                clientHandler.sendMsg(message);
         }
     }
 
     void subscribe(ClientHandler clientHandler, String nick) {
         peers.add(clientHandler);
         nicksLst.add(nick);
+        broadcast(nick,nick+" connected");
     }
 
     void unsubscribe(ClientHandler clientHandler, String nick) {
