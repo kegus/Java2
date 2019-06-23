@@ -3,6 +3,7 @@ package Lesson7;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -48,10 +49,29 @@ class Server {
         }
     }
 
-    void broadcast(String nick, String message) {
+    public void sendListTo(String nick) {
+        StringBuffer lst = new StringBuffer();
+        for (String nk : nicksLst) {
+            lst.append(nk+", ");
+        }
+        if (lst.length()>0) lst.setLength(lst.length()-2);
+        String msg = lst.toString();
+        sendMsgTo(nick, msg);
+    }
+
+    void sendMsgTo(String nick, String msg) {
+        for (ClientHandler clientHandler : peers) {
+            if (clientHandler.getNick().equals(nick)) {
+                clientHandler.sendMsg(msg);
+                break;
+            }
+        }
+    }
+
+    void broadcast(String nick, String msg) {
         for (ClientHandler clientHandler : peers) {
             if (!clientHandler.getNick().equals(nick))
-                clientHandler.sendMsg(message);
+                clientHandler.sendMsg(msg);
         }
     }
 
@@ -65,4 +85,5 @@ class Server {
         peers.remove(clientHandler);
         peers.remove(nick);
     }
+
 }

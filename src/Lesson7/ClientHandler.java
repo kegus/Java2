@@ -56,8 +56,20 @@ public class ClientHandler {
                 if (str.equalsIgnoreCase("/end")) {
                     sendMsg("/serverclosed");
                     break;
-                }
-                server.broadcast(nick, str);
+                } else
+                if (str.startsWith("/to")) {
+                    String[] tokens = str.split(" ");
+                    StringBuffer s = new StringBuffer();
+                    for (int i = 2; i < tokens.length; i++) {
+                        s.append(tokens[i] + " ");
+                    }
+                    String msg = s.toString();
+                    server.sendMsgTo(tokens[1], "from " + nick +": " + msg);
+                } else
+                if (str.startsWith("/list")) {
+                    server.sendListTo(nick);
+                } else
+                    server.broadcast(nick, str);
             } catch (IOException e) {
                 e.printStackTrace();
                 break;
@@ -65,7 +77,7 @@ public class ClientHandler {
         }
     }
 
-    private void autorization() throws IOException {
+        private void autorization() throws IOException {
         while (true) {
             String str = in.readUTF();
             if (str.startsWith("/auth")) {

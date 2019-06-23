@@ -34,6 +34,7 @@ public class MyClient1 extends JFrame {
             while (true) try {
                 while (true) try {
                     socket = new Socket(ADDR, PORT);
+                    area.append("connect to server succesfull\n");
                     in = new DataInputStream(socket.getInputStream());
                     out = new DataOutputStream(socket.getOutputStream());
                     out.writeUTF("Hello");
@@ -42,6 +43,7 @@ public class MyClient1 extends JFrame {
                     area.append("trying to connect...\n");
                     try {
                         Thread.sleep(3000);
+                        if (!topPan.isVisible()) topPan.setVisible(true);
                     } catch (InterruptedException ie) { }
                 }
 
@@ -56,7 +58,7 @@ public class MyClient1 extends JFrame {
                         closeConnect();
                         break;
                     } else
-                        area.append("Server: " + strFromSrv + "\n");
+                        area.append(strFromSrv + "\n");
                 }
             } catch (IOException e) {
                 area.append("Error reading from server\n");
@@ -133,7 +135,6 @@ public class MyClient1 extends JFrame {
         if (socket != null && socket.isConnected() && !nick.getText().trim().isEmpty()){
             try {
                 out.writeUTF("/auth " + nick.getText());
-
             } catch (IOException e) {
                 System.out.println("Error writing");
                 e.printStackTrace();
@@ -144,8 +145,13 @@ public class MyClient1 extends JFrame {
     private void sndMsg(){
         if (socket != null && socket.isConnected() && !msg.getText().trim().isEmpty()){
             try {
-                area.append("Client: "+msg.getText()+"\n");
-                out.writeUTF(nickName+": "+msg.getText());
+                String str = msg.getText();
+                if (str.startsWith("/to") || str.startsWith("/list")) {
+                    out.writeUTF(str);
+                } else {
+                    area.append("Client: " + str + "\n");
+                    out.writeUTF(nickName + ": " + str);
+                }
                 msg.setText("");
                 msg.grabFocus();
             } catch (IOException e) {
