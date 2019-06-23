@@ -57,7 +57,7 @@ public class ClientHandler {
                     sendMsg("/serverclosed");
                     break;
                 } else
-                if (str.startsWith("/to")) {
+                if (str.startsWith("/w")) {
                     String[] tokens = str.split(" ");
                     StringBuffer s = new StringBuffer();
                     for (int i = 2; i < tokens.length; i++) {

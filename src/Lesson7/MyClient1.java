@@ -146,7 +146,7 @@ public class MyClient1 extends JFrame {
         if (socket != null && socket.isConnected() && !msg.getText().trim().isEmpty()){
             try {
                 String str = msg.getText();
-                if (str.startsWith("/to") || str.startsWith("/list")) {
+                if (str.startsWith("/w") || str.startsWith("/list")) {
                     out.writeUTF(str);
                 } else {
                     area.append("Client: " + str + "\n");
