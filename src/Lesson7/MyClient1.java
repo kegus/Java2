@@ -1,5 +1,7 @@
 package Lesson7;
 
+import lib.TextPrompt;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -20,6 +22,8 @@ public class MyClient1 extends JFrame {
 
     private JTextArea area;
     private JTextField msg;
+    private JTextField nick;
+    private JPanel topPan;
 
     public MyClient1(){
         drawGUI();
@@ -44,6 +48,10 @@ public class MyClient1 extends JFrame {
 
                 while (true) {
                     String strFromSrv = in.readUTF();
+                    if (strFromSrv.equalsIgnoreCase("/authOK")) {
+                        topPan.setVisible(false);
+                        area.append("Server connected\n");
+                    }
                     if (strFromSrv.equalsIgnoreCase("/end")) {
                         closeConnect();
                         break;
@@ -79,6 +87,16 @@ public class MyClient1 extends JFrame {
         setTitle("Client");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        nick = new JTextField();
+        new TextPrompt("Введите ник", nick, TextPrompt.Show.ALWAYS);
+        topPan = new JPanel(new BorderLayout());
+        JButton btSendNick = new JButton("Ok");
+        btSendNick.addActionListener(e -> sndNick());
+        topPan.add(nick, BorderLayout.CENTER);
+        topPan.add(btSendNick, BorderLayout.EAST);
+
+        add(topPan, BorderLayout.NORTH);
+
         msg = new JTextField();
         area = new JTextArea();
         area.setEditable(false);
@@ -109,6 +127,21 @@ public class MyClient1 extends JFrame {
         });
 
         setVisible(true);
+    }
+
+    private void sndNick(){
+        if (socket != null && socket.isConnected() && !nick.getText().trim().isEmpty()){
+            try {
+//                area.append("Client: "+nick.getText()+"\n");
+                out.writeUTF("/auth " + nick.getText());
+//                nick.setText("");
+//                nick.grabFocus();
+
+            } catch (IOException e) {
+                System.out.println("Error writing");
+                e.printStackTrace();
+            }
+        }
     }
 
     private void sndMsg(){

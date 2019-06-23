@@ -11,15 +11,15 @@ public class ClientHandler {
     private AuthService authService;
     private DataOutputStream out;
     private DataInputStream in;
+    private String nick = null;
 
-
-    public ClientHandler(Server server, Socket socket) {
+    public ClientHandler(Server server, Socket socket, AuthService authService) {
         try {
             this.socket = socket;
             this.server = server;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-            this.authService = new AuthService();
+            this.authService = authService;
             new Thread(() -> {
                 try {
                     autorization();
@@ -64,14 +64,16 @@ public class ClientHandler {
             String str = in.readUTF();
             if (str.startsWith("/auth")) {
                 String[] tokens = str.split(" ");
-                String nick = authService.checkNick(tokens[1]);
+                nick = authService.checkNick(tokens[1]);
                 if (nick != null) {
                     sendMsg("/authOK");
-                    server.subscribe(this);
+                    server.subscribe(this, nick);
                     break;
                 } else {
                     sendMsg("Ник уже используется");
                 }
+            } else {
+                System.out.println("получено: "+str);
             }
         }
     }
@@ -84,6 +86,6 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        server.unsubscribe(this);
+        server.unsubscribe(this, nick);
     }
 }
