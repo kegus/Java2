@@ -1,8 +1,8 @@
 package Lesson7;
 
 public class AuthService {
-    public boolean checkNick(String nick) {
-        return false;
+    public String checkNick(String nick) {
+        return null;
     }
     public void start(){
 
