@@ -43,7 +43,7 @@ class Server {
                 socket.close();
                 serverSocket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             authService.stop();
         }
@@ -83,7 +83,8 @@ class Server {
 
     void unsubscribe(ClientHandler clientHandler, String nick) {
         peers.remove(clientHandler);
-        peers.remove(nick);
+        nicksLst.remove(nick);
+        broadcast(nick,nick+" leave chat");
     }
 
 }

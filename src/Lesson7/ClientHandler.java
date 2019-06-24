@@ -30,13 +30,15 @@ public class ClientHandler {
                     autorization();
                     read();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 } finally {
                     close();
                 }
             }).start();
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+        } finally {
+            server.unsubscribe(this, nick);
         }
     }
 
@@ -45,7 +47,7 @@ public class ClientHandler {
         try {
             out.writeUTF(msg);
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -54,7 +56,7 @@ public class ClientHandler {
             try {
                 String str = in.readUTF();
                 if (str.equalsIgnoreCase("/end")) {
-                    sendMsg("/serverclosed");
+                    //sendMsg("/serverclosed");
                     break;
                 } else
                 if (str.startsWith("/w")) {
@@ -71,7 +73,7 @@ public class ClientHandler {
                 } else
                     server.broadcast(nick, str);
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 break;
             }
         }
@@ -102,7 +104,7 @@ public class ClientHandler {
             out.close();
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         server.unsubscribe(this, nick);
     }

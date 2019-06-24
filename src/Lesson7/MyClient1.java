@@ -114,7 +114,7 @@ public class MyClient1 extends JFrame {
 
         add(botomPan, BorderLayout.SOUTH);
 
-        //при закрытии окна клиента остановить сервер и закрыть ресурсы
+        //при закрытии окна клиента отключится от сервера и закрыть ресурсы
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -136,8 +136,8 @@ public class MyClient1 extends JFrame {
             try {
                 out.writeUTF("/auth " + nick.getText());
             } catch (IOException e) {
-                System.out.println("Error writing");
-                e.printStackTrace();
+                System.out.println("sndNick Error writing");
+                //e.printStackTrace();
             }
         }
     }
@@ -155,8 +155,8 @@ public class MyClient1 extends JFrame {
                 msg.setText("");
                 msg.grabFocus();
             } catch (IOException e) {
-                System.out.println("Error writing");
-                e.printStackTrace();
+                System.out.println("sndMsg Error writing");
+                //e.printStackTrace();
             }
         }
     }
