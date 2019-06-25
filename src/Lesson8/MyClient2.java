@@ -20,9 +20,13 @@ public class MyClient2 extends JFrame {
     private Thread tLstnr;
 
     private JTextArea area;
+    private JTextArea nicksListArea;
     private JTextField msg;
     private JTextField nick;
+    private JTextField regNick;
     private JPanel topPan;
+    private JPanel regPan;
+    private JPanel nicksListPan;
 
     public MyClient2(){
         drawGUI();
@@ -89,13 +93,23 @@ public class MyClient2 extends JFrame {
         setTitle("Client");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+
         nick = new JTextField();
+        regNick = new JTextField();
         new TextPrompt("Введите ник", nick, TextPrompt.Show.ALWAYS);
+        new TextPrompt("Регистрация", regNick, TextPrompt.Show.ALWAYS);
         topPan = new JPanel(new BorderLayout());
+        regPan = new JPanel(new BorderLayout());
+        nicksListPan = new JPanel(new BorderLayout());
         JButton btSendNick = new JButton("Ok");
+        JButton btSendRegNick = new JButton("Ok");
         btSendNick.addActionListener(e -> sndNick());
+        btSendRegNick.addActionListener(e -> sndRegNick());
         topPan.add(nick, BorderLayout.CENTER);
         topPan.add(btSendNick, BorderLayout.EAST);
+        regPan.add(regNick, BorderLayout.CENTER);
+        regPan.add(btSendRegNick, BorderLayout.EAST);
+        topPan.add(regPan, BorderLayout.NORTH);
 
         add(topPan, BorderLayout.NORTH);
 
@@ -103,6 +117,11 @@ public class MyClient2 extends JFrame {
         area = new JTextArea();
         area.setEditable(false);
         area.setLineWrap(true);
+        nicksListArea = new JTextArea();
+        nicksListArea.setEditable(false);
+        nicksListArea.setLineWrap(true);
+        nicksListPan.add(nicksListArea, BorderLayout.CENTER);
+        add(nicksListPan, BorderLayout.EAST);
         add(new JScrollPane(area), BorderLayout.CENTER);
 
         JPanel botomPan = new JPanel(new BorderLayout());
@@ -129,6 +148,10 @@ public class MyClient2 extends JFrame {
         });
 
         setVisible(true);
+    }
+
+    private void sndRegNick() {
+
     }
 
     private void sndNick(){
