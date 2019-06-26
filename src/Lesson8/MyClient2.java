@@ -192,7 +192,7 @@ public class MyClient2 extends JFrame {
                 if (str.startsWith("/w") || str.startsWith("/list")) {
                     out.writeUTF(str);
                 } else {
-                    area.insert("Client: " + str + "\n", 0);
+                    //area.insert("Client: " + str + "\n", 0);
                     out.writeUTF(nickName + ": " + str);
                 }
                 msg.setText("");

@@ -75,8 +75,9 @@ class Server {
     }
 
     void broadcast(String nick, String msg) {
+        if (nick != null)
         for (ClientHandler clientHandler : peers) {
-            if (!clientHandler.getNick().equals(nick))
+            //if (!clientHandler.getNick().equals(nick))
                 clientHandler.sendMsg(msg);
         }
         broadcastList();
