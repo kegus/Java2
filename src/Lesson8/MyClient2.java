@@ -53,6 +53,12 @@ public class MyClient2 extends JFrame {
 
                 while (true) {
                     String strFromSrv = in.readUTF();
+                    if (strFromSrv.equalsIgnoreCase("/regOK")) {
+                        nickName = regNick.getText();
+                        regPan.setVisible(false);
+                        nick.setText(nickName);
+                        area.append("You are registered\n");
+                    } else
                     if (strFromSrv.equalsIgnoreCase("/authOK")) {
                         nickName = nick.getText();
                         topPan.setVisible(false);
@@ -151,7 +157,14 @@ public class MyClient2 extends JFrame {
     }
 
     private void sndRegNick() {
-
+        if (socket != null && socket.isConnected() && !regNick.getText().trim().isEmpty()){
+            try {
+                out.writeUTF("/reg " + regNick.getText());
+            } catch (IOException e) {
+                System.out.println("sndRegNick Error writing");
+                //e.printStackTrace();
+            }
+        }
     }
 
     private void sndNick(){

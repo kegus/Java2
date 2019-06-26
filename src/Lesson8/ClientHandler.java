@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ClientHandler {
+    private final int TIME_OUT = 120000;
     private Socket socket;
     private Server server;
     private AuthService authService;
@@ -13,11 +14,11 @@ public class ClientHandler {
     private DataInputStream in;
     private boolean autorized = false;
 
+    private String nick = null;
+
     public String getNick() {
         return nick;
     }
-
-    private String nick = null;
 
     public ClientHandler(Server server, Socket socket, AuthService authService) {
         try {
@@ -39,7 +40,7 @@ public class ClientHandler {
             }).start();
             new Thread(() -> {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(TIME_OUT);
                 } catch (InterruptedException e) {
                     //e.printStackTrace();
                     System.out.println("sleep error");
@@ -101,16 +102,25 @@ public class ClientHandler {
         private void autorization() throws IOException {
         while (true) {
             String str = in.readUTF();
-            if (str.startsWith("/auth")) {
+            if (str.startsWith("/reg")) {
                 String[] tokens = str.split(" ");
                 nick = authService.checkNick(tokens[1]);
-                if (nick != null) {
+                if (nick != null){
+                    authService.addNick(nick);
+                    sendMsg("/regOK");
+                } else
+                    sendMsg("Такой ник уже есть");
+            } else
+            if (str.startsWith("/auth")) {
+                String[] tokens = str.split(" ");
+                nick = tokens[1];
+                if (authService.existNick(nick)) {
                     setAutorized(true);
                     sendMsg("/authOK");
                     server.subscribe(this, nick);
                     break;
                 } else {
-                    sendMsg("Ник уже используется");
+                    sendMsg("Ник не найден");
                 }
             } else {
                 System.out.println("получено: "+str);

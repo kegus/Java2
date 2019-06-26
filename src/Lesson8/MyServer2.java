@@ -76,13 +76,13 @@ class Server {
 
     void subscribe(ClientHandler clientHandler, String nick) {
         peers.add(clientHandler);
-        nicksLst.add(nick);
+        //nicksLst.add(nick);
         broadcast(nick,nick+" connected");
     }
 
     void unsubscribe(ClientHandler clientHandler, String nick) {
         peers.remove(clientHandler);
-        nicksLst.remove(nick);
+        //nicksLst.remove(nick);
         broadcast(nick,nick+" leave chat");
     }
 
