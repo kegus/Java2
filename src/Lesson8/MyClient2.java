@@ -38,13 +38,13 @@ public class MyClient2 extends JFrame {
             while (true) try {
                 while (true) try {
                     socket = new Socket(ADDR, PORT);
-                    area.append("connect to server succesfull\n");
+                    area.insert("connect to server succesfull\n", 0);
                     in = new DataInputStream(socket.getInputStream());
                     out = new DataOutputStream(socket.getOutputStream());
                     out.writeUTF("Hello");
                     break;
                 } catch (IOException ioe) {
-                    area.append("trying to connect...\n");
+                    area.insert("trying to connect...\n", 0);
                     try {
                         Thread.sleep(3000);
                         if (!topPan.isVisible()) topPan.setVisible(true);
@@ -57,21 +57,28 @@ public class MyClient2 extends JFrame {
                         nickName = regNick.getText();
                         regPan.setVisible(false);
                         nick.setText(nickName);
-                        area.append("You are registered\n");
+                        area.insert("You are registered\n", 0);
                     } else
                     if (strFromSrv.equalsIgnoreCase("/authOK")) {
                         nickName = nick.getText();
                         topPan.setVisible(false);
-                        area.append("Server connected\n");
+                        area.insert("Server connected\n", 0);
+                    } else
+                    if (strFromSrv.startsWith("/list")) {
+                        String[] tokens = strFromSrv.split(" ");
+                        nicksListArea.setText("");
+                        for (int i = 1; i < tokens.length; i++) {
+                            nicksListArea.append(tokens[i]+"\n");
+                        }
                     } else
                     if (strFromSrv.equalsIgnoreCase("/end")) {
                         closeConnect();
                         break;
                     } else
-                        area.append(strFromSrv + "\n");
+                        area.insert(strFromSrv + "\n", 0);
                 }
             } catch (IOException e) {
-                area.append("Error reading from server\n");
+                area.insert("Error reading from server\n", 0);
                 try {
                     closeConnect();
                     Thread.sleep(1500);
@@ -185,7 +192,7 @@ public class MyClient2 extends JFrame {
                 if (str.startsWith("/w") || str.startsWith("/list")) {
                     out.writeUTF(str);
                 } else {
-                    area.append("Client: " + str + "\n");
+                    area.insert("Client: " + str + "\n", 0);
                     out.writeUTF(nickName + ": " + str);
                 }
                 msg.setText("");

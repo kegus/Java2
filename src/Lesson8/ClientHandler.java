@@ -77,6 +77,7 @@ public class ClientHandler {
                 String str = in.readUTF();
                 if (str.equalsIgnoreCase("/end")) {
                     //sendMsg("/serverclosed");
+
                     break;
                 } else
                 if (str.startsWith("/w")) {
