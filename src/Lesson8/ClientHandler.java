@@ -11,6 +11,7 @@ public class ClientHandler {
     private AuthService authService;
     private DataOutputStream out;
     private DataInputStream in;
+    private boolean autorized = false;
 
     public String getNick() {
         return nick;
@@ -30,9 +31,20 @@ public class ClientHandler {
                     autorization();
                     read();
                 } catch (IOException e) {
+                    System.out.println("client read error");
                     //e.printStackTrace();
                 } finally {
                     close();
+                }
+            }).start();
+            new Thread(() -> {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
+                    System.out.println("sleep error");
+                } finally {
+                    if (!isAutorized()) close();
                 }
             }).start();
         } catch (IOException e) {
@@ -42,6 +54,13 @@ public class ClientHandler {
         }
     }
 
+    private synchronized boolean isAutorized() {
+        return autorized;
+    }
+
+    private synchronized void setAutorized(boolean val) {
+        autorized = val;
+    }
 
     public void sendMsg(String msg){
         try {
@@ -86,6 +105,7 @@ public class ClientHandler {
                 String[] tokens = str.split(" ");
                 nick = authService.checkNick(tokens[1]);
                 if (nick != null) {
+                    setAutorized(true);
                     sendMsg("/authOK");
                     server.subscribe(this, nick);
                     break;
