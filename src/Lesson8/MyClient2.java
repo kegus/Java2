@@ -20,9 +20,13 @@ public class MyClient2 extends JFrame {
     private Thread tLstnr;
 
     private JTextArea area;
+    private JTextArea nicksListArea;
     private JTextField msg;
     private JTextField nick;
+    private JTextField regNick;
     private JPanel topPan;
+    private JPanel regPan;
+    private JPanel nicksListPan;
 
     public MyClient2(){
         drawGUI();
@@ -34,13 +38,13 @@ public class MyClient2 extends JFrame {
             while (true) try {
                 while (true) try {
                     socket = new Socket(ADDR, PORT);
-                    area.append("connect to server succesfull\n");
+                    area.insert("connect to server succesfull\n", 0);
                     in = new DataInputStream(socket.getInputStream());
                     out = new DataOutputStream(socket.getOutputStream());
                     out.writeUTF("Hello");
                     break;
                 } catch (IOException ioe) {
-                    area.append("trying to connect...\n");
+                    area.insert("trying to connect...\n", 0);
                     try {
                         Thread.sleep(3000);
                         if (!topPan.isVisible()) topPan.setVisible(true);
@@ -49,19 +53,32 @@ public class MyClient2 extends JFrame {
 
                 while (true) {
                     String strFromSrv = in.readUTF();
+                    if (strFromSrv.equalsIgnoreCase("/regOK")) {
+                        nickName = regNick.getText();
+                        regPan.setVisible(false);
+                        nick.setText(nickName);
+                        area.insert("You are registered\n", 0);
+                    } else
                     if (strFromSrv.equalsIgnoreCase("/authOK")) {
                         nickName = nick.getText();
                         topPan.setVisible(false);
-                        area.append("Server connected\n");
+                        area.insert("Server connected\n", 0);
+                    } else
+                    if (strFromSrv.startsWith("/list")) {
+                        String[] tokens = strFromSrv.split(" ");
+                        nicksListArea.setText("");
+                        for (int i = 1; i < tokens.length; i++) {
+                            nicksListArea.append(tokens[i]+"\n");
+                        }
                     } else
                     if (strFromSrv.equalsIgnoreCase("/end")) {
                         closeConnect();
                         break;
                     } else
-                        area.append(strFromSrv + "\n");
+                        area.insert(strFromSrv + "\n", 0);
                 }
             } catch (IOException e) {
-                area.append("Error reading from server\n");
+                area.insert("Error reading from server\n", 0);
                 try {
                     closeConnect();
                     Thread.sleep(1500);
@@ -89,13 +106,23 @@ public class MyClient2 extends JFrame {
         setTitle("Client");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+
         nick = new JTextField();
+        regNick = new JTextField();
         new TextPrompt("Введите ник", nick, TextPrompt.Show.ALWAYS);
+        new TextPrompt("Регистрация", regNick, TextPrompt.Show.ALWAYS);
         topPan = new JPanel(new BorderLayout());
+        regPan = new JPanel(new BorderLayout());
+        nicksListPan = new JPanel(new BorderLayout());
         JButton btSendNick = new JButton("Ok");
+        JButton btSendRegNick = new JButton("Ok");
         btSendNick.addActionListener(e -> sndNick());
+        btSendRegNick.addActionListener(e -> sndRegNick());
         topPan.add(nick, BorderLayout.CENTER);
         topPan.add(btSendNick, BorderLayout.EAST);
+        regPan.add(regNick, BorderLayout.CENTER);
+        regPan.add(btSendRegNick, BorderLayout.EAST);
+        topPan.add(regPan, BorderLayout.NORTH);
 
         add(topPan, BorderLayout.NORTH);
 
@@ -103,6 +130,11 @@ public class MyClient2 extends JFrame {
         area = new JTextArea();
         area.setEditable(false);
         area.setLineWrap(true);
+        nicksListArea = new JTextArea();
+        nicksListArea.setEditable(false);
+        nicksListArea.setLineWrap(true);
+        nicksListPan.add(nicksListArea, BorderLayout.CENTER);
+        add(nicksListPan, BorderLayout.EAST);
         add(new JScrollPane(area), BorderLayout.CENTER);
 
         JPanel botomPan = new JPanel(new BorderLayout());
@@ -131,6 +163,17 @@ public class MyClient2 extends JFrame {
         setVisible(true);
     }
 
+    private void sndRegNick() {
+        if (socket != null && socket.isConnected() && !regNick.getText().trim().isEmpty()){
+            try {
+                out.writeUTF("/reg " + regNick.getText());
+            } catch (IOException e) {
+                System.out.println("sndRegNick Error writing");
+                //e.printStackTrace();
+            }
+        }
+    }
+
     private void sndNick(){
         if (socket != null && socket.isConnected() && !nick.getText().trim().isEmpty()){
             try {
@@ -149,7 +192,7 @@ public class MyClient2 extends JFrame {
                 if (str.startsWith("/w") || str.startsWith("/list")) {
                     out.writeUTF(str);
                 } else {
-                    area.append("Client: " + str + "\n");
+                    //area.insert("Client: " + str + "\n", 0);
                     out.writeUTF(nickName + ": " + str);
                 }
                 msg.setText("");
